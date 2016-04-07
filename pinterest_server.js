@@ -6,7 +6,6 @@ var querystring = Npm.require('querystring');
 OAuth.registerService('pinterest', 2, null, function(query) {
 	var response = getTokenResponse(query);
 	var accessToken = response.accessToken; 
-	console.log(accessToken);
 	var whitelisted = ['id', 'first_name', 'last_name'];
 	var identity = getIdentity(accessToken, whitelisted);
 	var serviceData = {
@@ -38,7 +37,8 @@ var getTokenResponse = function (query) {
 	try {
 		// Request an access token
 		responseContent = HTTP.post(
-			"https://api.pinterest.com/v1/oauth/token?", {
+			"https://api.pinterest.com/v1/oauth/token?",
+			{
 				headers: {"User-Agent": "Meteor/1.0"},
 				params: {
 					grant_type: 'authorization_code', 
@@ -46,28 +46,25 @@ var getTokenResponse = function (query) {
 					redirect_uri: OAuth._redirectUri('pinterest', config), 
 					client_secret: config.secret,                           
 					code: query.code,
-				}});
+				}
+			}
+		);
 	} catch (err) {
-		throw _.extend(new Error("Failed to complete OAuth handshake with Facebook1. " + err.message),
+		throw _.extend(new Error("Failed to complete OAuth handshake with Pinterest. " + err.message),
 									 {response: err.response});
 	}
 	
-	// If 'responseContent' parses as JSON, it is an error.
-	// XXX which facebook error causes this behvaior?
-	
-	// Success!  Extract the facebook access token and expiration
+	// Success!  Extract the pinterest access token and expiration
 	// time from the response     
-	//console.log(responseContent);
-	var fbAccessToken = responseContent.data.access_token;   
-	console.log(fbAccessToken);
+	var accessToken = responseContent.data.access_token;
 	
-	if (!fbAccessToken) {
-		throw new Error("Failed to complete OAuth handshake with facebook " +
+	if (!accessToken) {
+		throw new Error("Failed to complete OAuth handshake with Pinterest " +
 										"-- can't find access token in HTTP response. " + responseContent);
 	}
-	console.log(responseContent.data);
+
 	return {
-		accessToken: fbAccessToken,
+		accessToken: accessToken,
 	};
 };
 
@@ -75,12 +72,11 @@ var getIdentity = function (accessToken, fields) {
 	try {
 		return HTTP.get("https://api.pinterest.com/v1/me", {
 			params: {
-				access_token: accessToken,  
-				
+				access_token: accessToken,
 			}
 		}).data;
 	} catch (err) {
-		throw _.extend(new Error("Failed to fetch identity from Facebook. " + err.message),
+		throw _.extend(new Error("Failed to fetch identity from Pinterest. " + err.message),
 									 {response: err.response});
 	}
 };
