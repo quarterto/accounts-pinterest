@@ -1,5 +1,5 @@
 Package.describe({
-  name: 'Pinterest accounts for Meteor',
+  name: 'accounts-pinterest',
   // Brief, one-line summary of the package.
   summary: 'Oauth login for Pinterest',
   version: '1.0.0',
