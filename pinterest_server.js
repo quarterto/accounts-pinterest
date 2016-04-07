@@ -8,14 +8,13 @@ OAuth.registerService('pinterest', 2, null, function(query) {
 	var accessToken = response.accessToken; 
 	var whitelisted = ['id', 'first_name', 'last_name'];
 	var identity = getIdentity(accessToken, whitelisted);
-	var serviceData = {
+	var serviceData = _.extend({
 		accessToken: accessToken,
 		expiresAt: (+new Date) + (1000 * 1000000000000000)
-	};
-	
+	}, identity.data);
 	
 	return {
-		serviceData: identity.data,
+		serviceData: serviceData,
 		options: {profile: {name: identity.data.first_name + ' ' + identity.data.last_name}}
 	};
 });
