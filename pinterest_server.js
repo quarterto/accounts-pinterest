@@ -14,13 +14,9 @@ OAuth.registerService('pinterest', 2, null, function(query) {
 	};
 	
 	
-	var fields = _.pick(identity, whitelisted);
-	_.extend(serviceData, fields);
-	//console.log(identity.data.id);
 	return {
-		serviceData: serviceData,
-		options: {profile: {name: identity.data.id}}
-		//options: {profile: {name: identity.name}}
+		serviceData: identity.data,
+		options: {profile: {name: identity.data.first_name + ' ' + identity.data.last_name}}
 	};
 });
 
@@ -44,7 +40,7 @@ var getTokenResponse = function (query) {
 					grant_type: 'authorization_code', 
 					client_id: config.clientId,  
 					redirect_uri: OAuth._redirectUri('pinterest', config), 
-					client_secret: config.secret,                           
+					client_secret: config.secret,
 					code: query.code,
 				}
 			}
